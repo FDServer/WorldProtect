@@ -28,4 +28,8 @@ public class BuildModeEnterEvent extends PlayerEvent implements Cancellable {
     public HandlerList getHandlers() {
         return HANDLERS_LIST;
     }
+
+    public static HandlerList getHandlersList() {
+        return HANDLERS_LIST;
+    }
 }
