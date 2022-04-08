@@ -14,10 +14,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 import java.util.HashMap;
 
@@ -99,10 +96,19 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
+        if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
             e.setCancelled(true);
             if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
-                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Bilderrahmen verwenden!"));
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier nicht mit Entitys interagieren!"));
+        }
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractAtEntityEvent e) {
+        if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
+            e.setCancelled(true);
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier nicht mit Entitys interagieren!"));
         }
     }
 

@@ -29,7 +29,7 @@ public class BuildModeLeaveEvent extends PlayerEvent implements Cancellable {
         return HANDLERS_LIST;
     }
 
-    public static HandlerList getHandlersList() {
+    public static HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
 }

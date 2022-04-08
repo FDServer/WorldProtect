@@ -65,6 +65,7 @@ public class WorldProtectConfig {
         blocks.put(Material.SPRUCE_DOOR, "Fichtenholztüren öffnen");
         //blocks.put(Material.WOODEN_DOOR, "Türen öffnen");
         blocks.put(Material.DRAGON_EGG, "Dracheneier berühren");
+        blocks.put(Material.BEACON, "Leuchtfeuer benutzen");
     }
 
     public boolean isActionbarMessages() {
