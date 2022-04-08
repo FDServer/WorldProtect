@@ -36,7 +36,8 @@ public class ProtectionListener implements Listener {
     public void onBreak(BlockBreakEvent e) {
         if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isBreakAllowed()) {
             e.setCancelled(true);
-            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke abbauen!"));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke abbauen!"));
         }
     }
 
@@ -44,7 +45,8 @@ public class ProtectionListener implements Listener {
     public void onPlace(BlockPlaceEvent e) {
         if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
             e.setCancelled(true);
-            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke setzen!"));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke setzen!"));
         }
     }
 
@@ -58,7 +60,8 @@ public class ProtectionListener implements Listener {
     public void onDrop(PlayerDropItemEvent e) {
         if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isDropAllowed()) {
             e.setCancelled(true);
-            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Items droppen!"));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Items droppen!"));
         }
     }
 
@@ -67,23 +70,28 @@ public class ProtectionListener implements Listener {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             if (!Builder.isBuilder(e.getPlayer()) && WorldProtect.getWorldProtectConfig().getBlocks().containsKey(e.getClickedBlock().getType())) {
                 e.setCancelled(true);
-                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(getError(e.getClickedBlock().getType())));
+                if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(getError(e.getClickedBlock().getType())));
             }
             if (e.getItem() != null && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isInteractAllowed()) {
                 Material m = e.getItem().getType();
                 if (m.name().endsWith("SPAWN_EGG") || m.equals(Material.ARMOR_STAND) || m.equals(Material.PAINTING) || m.equals(Material.ITEM_FRAME) || m.equals(Material.END_CRYSTAL)) {
                     e.setCancelled(true);
-                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier kein Entity spawnen!"));
+                    if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier kein Entity spawnen!"));
                 } else if (m.equals(Material.LAVA_BUCKET)
                         || m.equals(Material.WATER_BUCKET)) {
                     e.setCancelled(true);
-                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke setzen!"));
+                    if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke setzen!"));
                 } else if (m.equals(Material.BUCKET)) {
                     e.setCancelled(true);
-                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke abbauen!"));
+                    if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke abbauen!"));
                 } else if (m.equals(Material.FLINT_AND_STEEL)) {
                     e.setCancelled(true);
-                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier kein Feuerzeug verwenden!"));
+                    if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                        e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier kein Feuerzeug verwenden!"));
                 }
             }
         }
@@ -91,11 +99,10 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
-            if (!Builder.isBuilder(e.getPlayer())) {
-                e.setCancelled(true);
+        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
+            e.setCancelled(true);
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
                 e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Bilderrahmen verwenden!"));
-            }
         }
     }
 
@@ -105,7 +112,8 @@ public class ProtectionListener implements Listener {
             return;
         if (!Builder.isBuilder((Player) e.getDamager()) && !WorldProtect.getWorldProtectConfig().isDamageAllowed()) {
             e.setCancelled(true);
-            ((Player) e.getDamager()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Gewalt ist die Sprache der Dummen!"));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                ((Player) e.getDamager()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Gewalt ist die Sprache der Dummen!"));
         }
     }
 
@@ -117,7 +125,8 @@ public class ProtectionListener implements Listener {
         }
         if (!Builder.isBuilder((Player) e.getRemover()) && !WorldProtect.getWorldProtectConfig().isBreakAllowed()) {
             e.setCancelled(true);
-            ((Player) e.getRemover()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Bilderrahmen zerstören."));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                ((Player) e.getRemover()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Bilderrahmen zerstören."));
         }
     }
 
@@ -133,7 +142,8 @@ public class ProtectionListener implements Listener {
         if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.FLOWER_POT) && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
             e.setCancelled(true);
             e.getClickedBlock().getState().update();
-            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blumen klauen!"));
+            if (WorldProtect.getWorldProtectConfig().isActionbarMessages())
+                e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blumen klauen!"));
         }
     }
 

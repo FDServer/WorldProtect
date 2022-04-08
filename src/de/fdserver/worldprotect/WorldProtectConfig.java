@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class WorldProtectConfig {
 
-    private boolean breakAllowed = false, placeAllowed = false, interactAllowed = false, explodeAllowed = false, dropAllowed = false, damageAllowed = false;
+    private boolean actionbarMessages = true, breakAllowed = false, placeAllowed = false, interactAllowed = false, explodeAllowed = false, dropAllowed = false, damageAllowed = false;
     private final HashMap<Material, String> blocks = new HashMap<>();
 
     public WorldProtectConfig() {
@@ -65,6 +65,14 @@ public class WorldProtectConfig {
         blocks.put(Material.SPRUCE_DOOR, "Fichtenholztüren öffnen");
         //blocks.put(Material.WOODEN_DOOR, "Türen öffnen");
         blocks.put(Material.DRAGON_EGG, "Dracheneier berühren");
+    }
+
+    public boolean isActionbarMessages() {
+        return actionbarMessages;
+    }
+
+    public void setActionbarMessages(boolean actionbarMessages) {
+        this.actionbarMessages = actionbarMessages;
     }
 
     public boolean isBreakAllowed() {
