@@ -2,6 +2,7 @@ main: de.fdserver.worldprotect.WorldProtect
 name: WorldProtect
 author: FDHoho007
 api-version: 1.18
+depend: [CoreAPI]
 version: 2.0.0
 
 commands:

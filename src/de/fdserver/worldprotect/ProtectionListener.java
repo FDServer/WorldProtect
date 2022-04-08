@@ -23,67 +23,8 @@ import java.util.HashMap;
 
 public class ProtectionListener implements Listener {
 
-    private static HashMap<Material, String> blocks = new HashMap<>();
-
-    static void init() {
-        blocks.put(Material.CHEST, "Kisten öffnen");
-        blocks.put(Material.DISPENSER, "Werfer benutzen");
-        blocks.put(Material.NOTE_BLOCK, "Notenblöcke verändern");
-        blocks.put(Material.TNT, "TNTs benutzen");
-        blocks.put(Material.CRAFTING_TABLE, "Werkbank benutzen");
-        blocks.put(Material.FURNACE, "Öfen benutzen");
-        blocks.put(Material.LEVER, "Hebel benutzen");
-        blocks.put(Material.STONE_BUTTON, "Steinknöpfe benutzen");
-        blocks.put(Material.JUKEBOX, "Schallplatenspieler benutzen");
-        //blocks.put(Material.TRAP_DOOR, "Falltüren öffnen");
-        blocks.put(Material.ENCHANTING_TABLE, "Zaubertische benutzen");
-        blocks.put(Material.END_PORTAL_FRAME, "Endportalrahmen benutzen");
-        blocks.put(Material.ENDER_CHEST, "Enderkisten öffnen");
-        //blocks.put(Material.WOOD_BUTTON, "Holzknöpfe benutzen");
-        blocks.put(Material.ANVIL, "Ambosse benutzen");
-        blocks.put(Material.TRAPPED_CHEST, "Redstonetruhen öffnen");
-        blocks.put(Material.DAYLIGHT_DETECTOR, "Tageslichtsensoren verstellen");
-        blocks.put(Material.HOPPER, "Trichter öffnen");
-        blocks.put(Material.DROPPER, "Spender öffnen");
-        //blocks.put(Material.FENCE_GATE, "Zauntore öffnen");
-        blocks.put(Material.ACACIA_FENCE_GATE, "Akazienholzzauntore öffnen");
-        blocks.put(Material.BIRCH_FENCE_GATE, "Birkenholzzauntore öffnen");
-        blocks.put(Material.DARK_OAK_FENCE_GATE, "Schwarzeichenholzzauntore öffnen");
-        blocks.put(Material.JUNGLE_FENCE_GATE, "Tropenholzzauntore öffnen");
-        blocks.put(Material.SPRUCE_FENCE_GATE, "Fichtenholzzauntore öffnen");
-        blocks.put(Material.OBSERVER, "Beobachter benutzen");
-        blocks.put(Material.BLACK_SHULKER_BOX, "schwarzen Shulkerboxen öffnen");
-        blocks.put(Material.BLUE_SHULKER_BOX, "blauen Shulkerboxen öffnen");
-        blocks.put(Material.BROWN_SHULKER_BOX, "braunen Shulkerboxen öffnen");
-        blocks.put(Material.CYAN_SHULKER_BOX, "türkisen Shulkerboxen öffnen");
-        blocks.put(Material.GRAY_SHULKER_BOX, "grauen Shulkerboxen öffnen");
-        blocks.put(Material.GREEN_SHULKER_BOX, "grünen Shulkerboxen öffnen");
-        blocks.put(Material.LIGHT_BLUE_SHULKER_BOX, "hellblauen Shulkerboxen öffnen");
-        blocks.put(Material.LIME_SHULKER_BOX, "hellgrünen Shulkerboxen öffnen");
-        blocks.put(Material.MAGENTA_SHULKER_BOX, "magentanen Shulkerboxen öffnen");
-        blocks.put(Material.ORANGE_SHULKER_BOX, "orangenen Shulkerboxen öffnen");
-        blocks.put(Material.PINK_SHULKER_BOX, "rosanen Shulkerboxen öffnen");
-        blocks.put(Material.PURPLE_SHULKER_BOX, "lilanen Shulkerboxen öffnen");
-        blocks.put(Material.RED_SHULKER_BOX, "roten Shulkerboxen öffnen");
-        blocks.put(Material.LIGHT_GRAY_SHULKER_BOX, "silbernen Shulkerboxen öffnen");
-        blocks.put(Material.WHITE_SHULKER_BOX, "weißen Shulkerboxen öffnen");
-        blocks.put(Material.YELLOW_SHULKER_BOX, "gelben Shulkerboxen öffnen");
-        //blocks.put(Material.BED, "Betten benutzen");
-        blocks.put(Material.REPEATER, "Redstone-Repeater verstellen");
-        blocks.put(Material.CAULDRON, "Kessel benutzen");
-        blocks.put(Material.COMPARATOR, "Redstone-Komparatoren verstellen");
-        blocks.put(Material.CAKE, "Kuche essen");
-        blocks.put(Material.BREWING_STAND, "Braustände benutzen");
-        blocks.put(Material.ACACIA_DOOR, "Akazienholztüren öffnen");
-        blocks.put(Material.BIRCH_DOOR, "Birkenholztüren öffnen");
-        blocks.put(Material.DARK_OAK_DOOR, "Schwarzeichenholztüren öffnen");
-        blocks.put(Material.JUNGLE_DOOR, "Tropenholztüren öffnen");
-        blocks.put(Material.SPRUCE_DOOR, "Fichtenholztüren öffnen");
-        //blocks.put(Material.WOODEN_DOOR, "Türen öffnen");
-        blocks.put(Material.DRAGON_EGG, "Dracheneier berühren");
-    }
-
     private static String getError(Material m) {
+        HashMap<Material, String> blocks = WorldProtect.getWorldProtectConfig().getBlocks();
         if (!blocks.containsKey(m))
             return null;
         return "§4Du darfst hier keine " + blocks.get(m) + "!";
@@ -93,7 +34,7 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
-        if (!Builder.isBuilder(e.getPlayer())) {
+        if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isBreakAllowed()) {
             e.setCancelled(true);
             e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke abbauen!"));
         }
@@ -101,7 +42,7 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onPlace(BlockPlaceEvent e) {
-        if (!Builder.isBuilder(e.getPlayer())) {
+        if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
             e.setCancelled(true);
             e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blöcke setzen!"));
         }
@@ -109,12 +50,13 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
-        e.setCancelled(true);
+        if (!WorldProtect.getWorldProtectConfig().isExplodeAllowed())
+            e.setCancelled(true);
     }
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent e) {
-        if (!Builder.isBuilder(e.getPlayer())) {
+        if (!Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isDropAllowed()) {
             e.setCancelled(true);
             e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Items droppen!"));
         }
@@ -123,11 +65,11 @@ public class ProtectionListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            if (!Builder.isBuilder(e.getPlayer()) && blocks.containsKey(e.getClickedBlock().getType())) {
+            if (!Builder.isBuilder(e.getPlayer()) && WorldProtect.getWorldProtectConfig().getBlocks().containsKey(e.getClickedBlock().getType())) {
                 e.setCancelled(true);
                 e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(getError(e.getClickedBlock().getType())));
             }
-            if (e.getItem() != null && !Builder.isBuilder(e.getPlayer())) {
+            if (e.getItem() != null && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isInteractAllowed()) {
                 Material m = e.getItem().getType();
                 if (m.name().endsWith("SPAWN_EGG") || m.equals(Material.ARMOR_STAND) || m.equals(Material.PAINTING) || m.equals(Material.ITEM_FRAME) || m.equals(Material.END_CRYSTAL)) {
                     e.setCancelled(true);
@@ -161,17 +103,10 @@ public class ProtectionListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent e) {
         if (!e.getDamager().getType().equals(EntityType.PLAYER))
             return;
-        if (!Builder.isBuilder((Player) e.getDamager())) {
+        if (!Builder.isBuilder((Player) e.getDamager()) && !WorldProtect.getWorldProtectConfig().isDamageAllowed()) {
             e.setCancelled(true);
-            ((Player) e.getDamager()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent());
+            ((Player) e.getDamager()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Gewalt ist die Sprache der Dummen!"));
         }
-    }
-
-    @EventHandler
-    public void onFade(EntityChangeBlockEvent e) {
-        if (e.getBlock().getType().equals(Material.FARMLAND))
-            if (!e.getEntity().getType().equals(EntityType.PLAYER) || !Builder.isBuilder((Player) e.getEntity()))
-                e.setCancelled(true);
     }
 
     @EventHandler
@@ -180,21 +115,26 @@ public class ProtectionListener implements Listener {
             e.setCancelled(true);
             return;
         }
-        if (!Builder.isBuilder((Player) e.getRemover())) {
+        if (!Builder.isBuilder((Player) e.getRemover()) && !WorldProtect.getWorldProtectConfig().isBreakAllowed()) {
             e.setCancelled(true);
-            ((Player) e.getRemover()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent());
+            ((Player) e.getRemover()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Bilderrahmen zerstören."));
         }
     }
 
     @EventHandler
+    public void onFade(EntityChangeBlockEvent e) {
+        if (e.getBlock().getType().equals(Material.FARMLAND))
+            if (!e.getEntity().getType().equals(EntityType.PLAYER) || (!Builder.isBuilder((Player) e.getEntity()) && (!WorldProtect.getWorldProtectConfig().isBreakAllowed() || !WorldProtect.getWorldProtectConfig().isPlaceAllowed())))
+                e.setCancelled(true);
+    }
+
+    @EventHandler
     public void onInteractFlowerPot(PlayerInteractEvent e) {
-        if (e.getClickedBlock() != null)
-            if (e.getClickedBlock().getType().equals(Material.FLOWER_POT))
-                if (!Builder.isBuilder(e.getPlayer())) {
-                    e.setCancelled(true);
-                    e.getClickedBlock().getState().update();
-                    e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blumen klauen!"));
-                }
+        if (e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.FLOWER_POT) && !Builder.isBuilder(e.getPlayer()) && !WorldProtect.getWorldProtectConfig().isPlaceAllowed()) {
+            e.setCancelled(true);
+            e.getClickedBlock().getState().update();
+            e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§4Du darfst hier keine Blumen klauen!"));
+        }
     }
 
     @EventHandler
